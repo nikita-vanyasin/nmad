@@ -3,14 +3,16 @@
 ## WIP
 
 Available commands:
+```
 nmad city set Budva
 nmad city get Tbilisi
+nmad country get Turkey
+nmad list
+```
 
 planned:
 ```
 // nmad help
-// nmad country get Turkey
-// nmad list
 // map
 // history %username
 // plan %city %dateStart %dateEnd

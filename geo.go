@@ -13,7 +13,7 @@ import (
 
 type GeoInfo interface {
 	LookupCity(ctx context.Context, n string) (*Location, error)
-	CheckCountryName(ctx context.Context, n string) (string, error)
+	LookupCountry(ctx context.Context, n string) (string, error)
 }
 
 const (
@@ -33,6 +33,23 @@ func NewGeoInfo() (GeoInfo, error) {
 }
 
 func (c *geoNamesClient) LookupCity(ctx context.Context, name string) (*Location, error) {
+	return c.lookupName(ctx, name, featureClassCity)
+}
+
+func (c *geoNamesClient) LookupCountry(ctx context.Context, name string) (string, error) {
+	l, err := c.lookupName(ctx, name, featureClassCountry)
+	if err != nil {
+		return "", err
+	}
+
+	if l == nil {
+		return "", nil
+	}
+
+	return l.Country, nil
+}
+
+func (c *geoNamesClient) lookupName(ctx context.Context, name string, featureClass string) (*Location, error) {
 	var u = url.URL{
 		Scheme: "http",
 		Host:   "api.geonames.org",
@@ -41,7 +58,7 @@ func (c *geoNamesClient) LookupCity(ctx context.Context, name string) (*Location
 			"username":     []string{c.loginName},
 			"maxRows":      []string{"1"},
 			"q":            []string{name},
-			"featureClass": []string{featureClassCity},
+			"featureClass": []string{featureClass},
 		}.Encode(),
 	}
 
@@ -62,8 +79,8 @@ func (c *geoNamesClient) LookupCity(ctx context.Context, name string) (*Location
 
 	var response struct {
 		GeoNames []struct {
-			Name        string `json:"name"`
-			CountryName string `json:"countryName"`
+			Name        string `json:"name,omitempty"`
+			CountryName string `json:"countryName,omitempty"`
 			Lat         string `json:"lat"`
 			Lng         string `json:"lng"`
 		} `json:"geonames"`
@@ -93,8 +110,4 @@ func (c *geoNamesClient) LookupCity(ctx context.Context, name string) (*Location
 		Lat:     lat,
 		Lng:     lng,
 	}, nil
-}
-
-func (c *geoNamesClient) CheckCountryName(ctx context.Context, n string) (string, error) {
-	return "not implemented", nil
 }
