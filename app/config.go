@@ -6,6 +6,7 @@ import (
 )
 
 type Config struct {
+	APIPort          string
 	TelegramAPIToken string
 	GeoNamesAPILogin string
 	ArangoDBEndpoint string
@@ -17,6 +18,7 @@ type Config struct {
 var CONFIG Config
 
 func init() {
+	CONFIG.APIPort = mustGetEnv("NMAD_API_PORT")
 	CONFIG.TelegramAPIToken = mustGetEnv("TELEGRAM_API_TOKEN")
 	CONFIG.GeoNamesAPILogin = mustGetEnv("GEONAMES_API_LOGIN_NAME")
 	CONFIG.ArangoDBEndpoint = mustGetEnv("ARANGODB_ENDPOINT")
