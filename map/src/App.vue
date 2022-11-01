@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <img alt="Nmad logo" class="logo" src="@/assets/logo.png" width="80" height="80" />
+    <img alt="Nmad logo" class="logo" src="@/assets/logo.png" width="60" height="60" />
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -24,12 +24,12 @@ import { RouterLink, RouterView } from 'vue-router'
 }
 
 .wrapper nav {
-  margin-top: 35px;
+  margin-top: 22px;
   margin-left: 20px;
 }
 
 .logo {
-  border-radius: 40px;
+  border-radius: 30px;
   display: inline-block;
   margin-left: 5px;
   margin-top: 5px;

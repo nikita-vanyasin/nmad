@@ -2,7 +2,7 @@
   <div class="map-container">
     <GoogleMap
         :api-key="apiKey"
-        style="width: 100%; height: 500px"
+        style="width: 100%; height: calc(100vh - 75px)"
         :zoom="2"
         :zoomControl="true"
     >
