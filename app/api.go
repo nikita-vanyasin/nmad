@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -26,8 +27,19 @@ func newAPIListener(ctx context.Context) *http.Server {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
+		type respItem struct {
+			NomadLocation
+			ProfileURL string `json:"profile_url"`
+		}
+		respItems := make([]respItem, 0)
+		for _, l := range nls {
+			respItems = append(respItems, respItem{
+				NomadLocation: l,
+				ProfileURL:    fmt.Sprintf("https://t.me/%s", l.Username),
+			})
+		}
 
-		response, err := json.Marshal(nls)
+		response, err := json.Marshal(respItems)
 		if err != nil {
 			log.Printf("Marshal %s", err)
 			c.AbortWithStatus(http.StatusInternalServerError)

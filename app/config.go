@@ -5,9 +5,10 @@ import (
 )
 
 type Config struct {
-	APIPort          string `env:"NMAD_API_PORT"`
-	TelegramAPIToken string `env:"TELEGRAM_API_TOKEN"`
-	GeoNamesAPILogin string `env:"GEONAMES_API_LOGIN_NAME"`
+	APIPort            string `env:"NMAD_API_PORT"`
+	TelegramAPIToken   string `env:"TELEGRAM_API_TOKEN"`
+	GeoNamesAPILogin   string `env:"GEONAMES_API_LOGIN_NAME"`
+	MapServiceEndpoint string `env:"MAP_SERVICE_ENDPOINT"`
 
 	ArangoDBEndpoint string `env:"ARANGODB_ENDPOINT" envDefault:""`
 	ArangoDBUser     string `env:"ARANGODB_USER" envDefault:""`

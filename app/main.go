@@ -62,6 +62,7 @@ func handleCommand(ctx context.Context, cmd string, chat *tele.Chat, sender *tel
 		"city get ":    handleGetCity,
 		"country get ": handleGetCountry,
 		"list":         handleList,
+		"map":          handleMap,
 	}
 
 	usageInfo := "Available commands:"

@@ -131,3 +131,13 @@ func handleList(ctx context.Context, args []string, chat *tele.Chat, sender *tel
 
 	return fmt.Sprintf("Nomads in this chat:\n%s", strings.Join(nomadList, "\n")), nil
 }
+
+func handleMap(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
+	if len(args) > 0 {
+		return "unsupported command", nil
+	}
+
+	chatID := strconv.FormatInt(chat.ID, 10)
+	url := fmt.Sprintf("%s/map/%s", CONFIG.MapServiceEndpoint, chatID)
+	return fmt.Sprintf("🧭 %s", url), nil
+}
