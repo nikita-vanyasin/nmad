@@ -1,36 +1,27 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"github.com/caarlos0/env/v6"
 )
 
 type Config struct {
-	APIPort          string
-	TelegramAPIToken string
-	GeoNamesAPILogin string
-	ArangoDBEndpoint string
-	ArangoDBUser     string
-	ArangoDBPassword string
-	ArangoDBCA       string
+	APIPort          string `env:"NMAD_API_PORT"`
+	TelegramAPIToken string `env:"TELEGRAM_API_TOKEN"`
+	GeoNamesAPILogin string `env:"GEONAMES_API_LOGIN_NAME"`
+
+	ArangoDBEndpoint string `env:"ARANGODB_ENDPOINT" envDefault:""`
+	ArangoDBUser     string `env:"ARANGODB_USER" envDefault:""`
+	ArangoDBPassword string `env:"ARANGODB_PASSWORD" envDefault:""`
+	ArangoDBCA       string `env:"ARANGODB_CA" envDefault:""`
+
+	MongoDBConnectURL string `env:"MONGODB_CONNECT_URL" envDefault:""`
 }
 
 var CONFIG Config
 
 func init() {
-	CONFIG.APIPort = mustGetEnv("NMAD_API_PORT")
-	CONFIG.TelegramAPIToken = mustGetEnv("TELEGRAM_API_TOKEN")
-	CONFIG.GeoNamesAPILogin = mustGetEnv("GEONAMES_API_LOGIN_NAME")
-	CONFIG.ArangoDBEndpoint = mustGetEnv("ARANGODB_ENDPOINT")
-	CONFIG.ArangoDBUser = mustGetEnv("ARANGODB_USER")
-	CONFIG.ArangoDBPassword = mustGetEnv("ARANGODB_PASSWORD")
-	CONFIG.ArangoDBCA = mustGetEnv("ARANGODB_CA")
-}
-
-func mustGetEnv(n string) string {
-	v := os.Getenv(n)
-	if v == "" {
-		panic(fmt.Sprintf("env variable %s not set", n))
+	err := env.Parse(&CONFIG, env.Options{RequiredIfNoDef: true})
+	if err != nil {
+		panic(err)
 	}
-	return v
 }

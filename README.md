@@ -8,14 +8,15 @@ nmad city set Budva
 nmad city get Tbilisi
 nmad country get Turkey
 nmad list
+nmad help
 ```
 
 planned:
 ```
-// nmad help
 // map
 // history %username
 // plan %city %dateStart %dateEnd
+// erase / clean history
 // ...
 ```
 

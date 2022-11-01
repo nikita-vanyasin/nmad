@@ -3,34 +3,39 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func newAPIListener(ctx context.Context) *http.Server {
-	router := httprouter.New()
-	router.GET("/list/:chat_id", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		chatID := ps.ByName("chat_id")
+	r := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	r.Use(cors.New(config))
+
+	r.GET("/api/v1/list/:chat_id", func(c *gin.Context) {
+		chatID := c.Param("chat_id")
 
 		nls, err := storage.List(ctx, chatID)
 		if err != nil {
-			log.Printf("List %s", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			log.Printf("List: %s", err)
+			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 
 		response, err := json.Marshal(nls)
 		if err != nil {
 			log.Printf("Marshal %s", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 
-		fmt.Fprintf(w, string(response))
+		c.String(http.StatusOK, string(response))
 	})
 
-	return &http.Server{Addr: "0.0.0.0:" + CONFIG.APIPort, Handler: router}
+	return &http.Server{Addr: "0.0.0.0:" + CONFIG.APIPort, Handler: r}
 }

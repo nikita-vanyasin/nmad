@@ -19,12 +19,15 @@ var (
 )
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	var err error
-	storage, err = NewArangodbDBStorage()
+	storage, err = NewMongoDBStorage()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+	defer storage.Close(ctx)
 
 	geoInfo, err = NewGeoInfo()
 	if err != nil {
@@ -34,7 +37,6 @@ func main() {
 
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
-	ctx, cancel := context.WithCancel(context.Background())
 
 	b := newTelegramBot(ctx)
 	go b.Start()
@@ -62,6 +64,14 @@ func handleCommand(ctx context.Context, cmd string, chat *tele.Chat, sender *tel
 		"list":         handleList,
 	}
 
+	usageInfo := "Available commands:"
+	for p := range m {
+		usageInfo += fmt.Sprintf("\n%s%s", commandPrefix, strings.TrimSpace(p))
+	}
+	m["help"] = func(ctx context.Context, i []string, chat *tele.Chat, user *tele.User) (string, error) {
+		return usageInfo, nil
+	}
+
 	for p, fn := range m {
 		if rest := strings.TrimPrefix(cmd, p); rest != cmd {
 			args := strings.Split(rest, " ")
@@ -70,11 +80,7 @@ func handleCommand(ctx context.Context, cmd string, chat *tele.Chat, sender *tel
 		}
 	}
 
-	usageInfo := "Unknown command! Use one of these:"
-	for p := range m {
-		usageInfo += fmt.Sprintf("\n%s%s", commandPrefix, strings.TrimSpace(p))
-	}
-	return usageInfo, nil
+	return fmt.Sprintf("Unknown command. %s", usageInfo), nil
 }
 
 func filterOutEmptyStrings(strs []string) []string {
