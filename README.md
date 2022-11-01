@@ -4,16 +4,15 @@
 
 Available commands:
 ```
-nmad city set Budva
-nmad city get Tbilisi
-nmad country get Turkey
-nmad list
-nmad help
+/set city Budva
+/get city Tbilisi
+/get country Turkey
+/list
+/map
 ```
 
 planned:
 ```
-// map
 // history %username
 // plan %city %dateStart %dateEnd
 // erase / clean history

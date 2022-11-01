@@ -2,13 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
-
-	tele "gopkg.in/telebot.v3"
 )
 
 const commandPrefix = "nmad "
@@ -54,42 +50,4 @@ func main() {
 	log.Printf("got SIGINT. Terminating...")
 	b.Stop()
 	cancel()
-}
-
-func handleCommand(ctx context.Context, cmd string, chat *tele.Chat, sender *tele.User) (string, error) {
-	m := map[string]HandlerFunc{
-		"city set ":    handleSetCity,
-		"city get ":    handleGetCity,
-		"country get ": handleGetCountry,
-		"list":         handleList,
-		"map":          handleMap,
-	}
-
-	usageInfo := "Available commands:"
-	for p := range m {
-		usageInfo += fmt.Sprintf("\n%s%s", commandPrefix, strings.TrimSpace(p))
-	}
-	m["help"] = func(ctx context.Context, i []string, chat *tele.Chat, user *tele.User) (string, error) {
-		return usageInfo, nil
-	}
-
-	for p, fn := range m {
-		if rest := strings.TrimPrefix(cmd, p); rest != cmd {
-			args := strings.Split(rest, " ")
-			args = filterOutEmptyStrings(args)
-			return fn(ctx, args, chat, sender)
-		}
-	}
-
-	return fmt.Sprintf("Unknown command. %s", usageInfo), nil
-}
-
-func filterOutEmptyStrings(strs []string) []string {
-	var result []string
-	for _, s := range strs {
-		if s != "" {
-			result = append(result, s)
-		}
-	}
-	return result
 }

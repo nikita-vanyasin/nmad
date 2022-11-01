@@ -30,8 +30,8 @@ func lookupCity(ctx context.Context, requestedCity string) (*Location, string, e
 	return loc, "", nil
 }
 
-func handleSetCity(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
-	loc, resp, err := lookupCity(ctx, strings.Join(args, " "))
+func handleSetCity(ctx context.Context, requestedCity string, chat *tele.Chat, sender *tele.User) (string, error) {
+	loc, resp, err := lookupCity(ctx, requestedCity)
 	if err != nil {
 		return "", err
 	}
@@ -53,8 +53,33 @@ func handleSetCity(ctx context.Context, args []string, chat *tele.Chat, sender *
 	return fmt.Sprintf("City %s set", loc.City), nil
 }
 
-func handleGetCity(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
-	loc, resp, err := lookupCity(ctx, strings.Join(args, " "))
+func handleSet(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
+	if len(args) < 2 {
+		return "invalid cmd", nil
+	}
+	switch args[0] {
+	case "city":
+		return handleSetCity(ctx, strings.Join(args[1:], " "), chat, sender)
+	}
+	return "invalid cmd", nil
+}
+
+func handleGet(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
+	if len(args) < 2 {
+		return "invalid cmd", nil
+	}
+	restArgs := strings.Join(args[1:], " ")
+	switch args[0] {
+	case "city":
+		return handleGetCity(ctx, restArgs, chat)
+	case "country":
+		return handleGetCountry(ctx, restArgs, chat)
+	}
+	return "invalid cmd", nil
+}
+
+func handleGetCity(ctx context.Context, requestedCity string, chat *tele.Chat) (string, error) {
+	loc, resp, err := lookupCity(ctx, requestedCity)
 	if err != nil {
 		return "", err
 	}
@@ -79,8 +104,7 @@ func handleGetCity(ctx context.Context, args []string, chat *tele.Chat, sender *
 	return fmt.Sprintf("Nomads in city %s:\n%s", loc.City, strings.Join(nomadList, "\n")), nil
 }
 
-func handleGetCountry(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
-	requestedCountry := strings.Join(args, " ")
+func handleGetCountry(ctx context.Context, requestedCountry string, chat *tele.Chat) (string, error) {
 	country, err := geoInfo.LookupCountry(ctx, requestedCountry)
 	if err != nil {
 		return "", errors.WithMessagef(err, "LookupCountry %s", requestedCountry)

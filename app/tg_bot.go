@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"strings"
 	"time"
 
 	tele "gopkg.in/telebot.v3"
@@ -25,28 +24,32 @@ func newTelegramBot(ctx context.Context) *tele.Bot {
 		log.Printf("ERR %s", err.Error())
 	}))
 
-	b.Handle(tele.OnText, func(c tele.Context) error {
-		text := c.Text()
-		if strings.HasPrefix(text, commandPrefix) {
+	m := map[string]HandlerFunc{
+		"set":  handleSet,
+		"get":  handleGet,
+		"list": handleList,
+		"map":  handleMap,
+	}
+	for cmd, handler := range m {
+		handler := handler
+		b.Handle("/"+cmd, func(c tele.Context) error {
 			chat := c.Chat()
 			if chat == nil {
 				return c.Send("bot can operate only on chats")
 			}
-
 			user := c.Sender()
 			if user == nil {
 				return c.Send("that was unexpected!")
 			}
 
-			response, err := handleCommand(ctx, strings.TrimSpace(strings.TrimPrefix(text, commandPrefix)), chat, user)
+			response, err := handler(ctx, c.Args(), chat, user)
 			if err != nil {
 				log.Printf("ERR %s", err.Error())
 				return c.Send("server error")
 			}
 			return c.Send(response)
-		}
-		return nil
-	})
+		})
+	}
 
 	return b
 }
