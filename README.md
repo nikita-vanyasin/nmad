@@ -2,6 +2,8 @@
 
 ## WIP
 
+[http://nmad.link/](http://nmad.link/)
+
 Available commands:
 ```
 /set city Budva
@@ -11,11 +13,10 @@ Available commands:
 /map
 ```
 
-planned:
+Planned:
 ```
-// history %username
-// plan %city %dateStart %dateEnd
-// erase / clean history
-// ...
+/history %username
+/plan %city %dateStart %dateEnd
+/erase or /clean
 ```
 
