@@ -6,19 +6,24 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
-func newAPIListener(ctx context.Context) *http.Server {
+func newHTTPListener(ctx context.Context, distDir string) *http.Server {
 	r := gin.Default()
 
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	r.Use(cors.New(config))
 
-	r.GET("/api/v1/list/:chat_id", func(c *gin.Context) {
+	r.Use(static.Serve("/", static.LocalFile(distDir, true)))
+
+	api := r.Group("/api/v1")
+	api.GET("/list/:chat_id", func(c *gin.Context) {
 		chatID := c.Param("chat_id")
 
 		nls, err := storage.List(ctx, chatID)
@@ -47,6 +52,10 @@ func newAPIListener(ctx context.Context) *http.Server {
 		}
 
 		c.String(http.StatusOK, string(response))
+	})
+
+	r.NoRoute(func(c *gin.Context) {
+		c.File(filepath.Join(distDir, "index.html"))
 	})
 
 	return &http.Server{Addr: "0.0.0.0:" + CONFIG.APIPort, Handler: r}

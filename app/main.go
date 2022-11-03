@@ -7,8 +7,6 @@ import (
 	"os/signal"
 )
 
-const commandPrefix = "nmad "
-
 var (
 	storage Storage
 	geoInfo GeoInfo
@@ -37,11 +35,11 @@ func main() {
 	b := newTelegramBot(ctx)
 	go b.Start()
 
-	apiServer := newAPIListener(ctx)
+	httpServer := newHTTPListener(ctx, "./dist")
 	go func() {
-		err := apiServer.ListenAndServe()
+		err := httpServer.ListenAndServe()
 		if err != nil && err != context.Canceled {
-			log.Printf("API server stopped with error %s", err)
+			log.Printf("HTTP server stopped with error %s", err)
 		}
 	}()
 	log.Printf("Started!")
