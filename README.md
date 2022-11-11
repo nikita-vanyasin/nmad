@@ -8,9 +8,9 @@ Add [bot](https://t.me/nmad_o_bot) to your chat to track nomad locations!
 
 Available commands:
 ```
-/set-city Budva
-/get-city Tbilisi
-/get-country Turkey
+/set_city Budva
+/get_city Tbilisi
+/get_country Turkey
 /list
 /map
 ```
