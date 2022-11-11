@@ -30,8 +30,11 @@ func lookupCity(ctx context.Context, requestedCity string) (*Location, string, e
 	return loc, "", nil
 }
 
-func handleSetCity(ctx context.Context, requestedCity string, chat *tele.Chat, sender *tele.User) (string, error) {
-	loc, resp, err := lookupCity(ctx, requestedCity)
+func handleSetCity(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
+	if len(args) < 1 {
+		return "invalid command! Use: /set_city Amsterdam", nil
+	}
+	loc, resp, err := lookupCity(ctx, strings.Join(args, " "))
 	if err != nil {
 		return "", err
 	}
@@ -53,33 +56,11 @@ func handleSetCity(ctx context.Context, requestedCity string, chat *tele.Chat, s
 	return fmt.Sprintf("City %s set", loc.City), nil
 }
 
-func handleSet(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
-	if len(args) < 2 {
-		return "invalid cmd", nil
+func handleGetCity(ctx context.Context, args []string, chat *tele.Chat, _ *tele.User) (string, error) {
+	if len(args) < 1 {
+		return "invalid command! Use: /get_city New York", nil
 	}
-	switch args[0] {
-	case "city":
-		return handleSetCity(ctx, strings.Join(args[1:], " "), chat, sender)
-	}
-	return "invalid cmd", nil
-}
-
-func handleGet(ctx context.Context, args []string, chat *tele.Chat, sender *tele.User) (string, error) {
-	if len(args) < 2 {
-		return "invalid cmd", nil
-	}
-	restArgs := strings.Join(args[1:], " ")
-	switch args[0] {
-	case "city":
-		return handleGetCity(ctx, restArgs, chat)
-	case "country":
-		return handleGetCountry(ctx, restArgs, chat)
-	}
-	return "invalid cmd", nil
-}
-
-func handleGetCity(ctx context.Context, requestedCity string, chat *tele.Chat) (string, error) {
-	loc, resp, err := lookupCity(ctx, requestedCity)
+	loc, resp, err := lookupCity(ctx, strings.Join(args, " "))
 	if err != nil {
 		return "", err
 	}
@@ -104,7 +85,11 @@ func handleGetCity(ctx context.Context, requestedCity string, chat *tele.Chat) (
 	return fmt.Sprintf("Nomads in city %s:\n%s", loc.City, strings.Join(nomadList, "\n")), nil
 }
 
-func handleGetCountry(ctx context.Context, requestedCountry string, chat *tele.Chat) (string, error) {
+func handleGetCountry(ctx context.Context, args []string, chat *tele.Chat, _ *tele.User) (string, error) {
+	if len(args) < 1 {
+		return "invalid command! Use: /get_country Turkey", nil
+	}
+	requestedCountry := strings.Join(args, " ")
 	country, err := geoInfo.LookupCountry(ctx, requestedCountry)
 	if err != nil {
 		return "", errors.WithMessagef(err, "LookupCountry %s", requestedCountry)
@@ -150,7 +135,7 @@ func handleList(ctx context.Context, args []string, chat *tele.Chat, sender *tel
 	}
 	var nomadList []string
 	for _, nl := range nls {
-		nomadList = append(nomadList, fmt.Sprintf("@%s", nl.Username))
+		nomadList = append(nomadList, fmt.Sprintf("@%s - %s, %s", nl.Username, nl.City, nl.Country))
 	}
 
 	return fmt.Sprintf("Nomads in this chat:\n%s", strings.Join(nomadList, "\n")), nil

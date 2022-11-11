@@ -25,10 +25,11 @@ func newTelegramBot(ctx context.Context) *tele.Bot {
 	}))
 
 	m := map[string]HandlerFunc{
-		"set":  handleSet,
-		"get":  handleGet,
-		"list": handleList,
-		"map":  handleMap,
+		"set_city":    handleSetCity,
+		"get_city":    handleGetCity,
+		"get_country": handleGetCountry,
+		"list":        handleList,
+		"map":         handleMap,
 	}
 	for cmd, handler := range m {
 		handler := handler
