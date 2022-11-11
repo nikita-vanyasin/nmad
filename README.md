@@ -15,10 +15,9 @@ Available commands:
 /map
 ```
 
-![image](https://user-images.githubusercontent.com/3998723/199846685-41355776-d42e-4d07-af9d-64a07c8d6a6e.png)
+![image](https://user-images.githubusercontent.com/3998723/201418062-4c33560b-7729-4a8d-861a-a2df165f6543.png)
 
-
-TODO
+TODO:
 ```
 /history %username
 /plan %city %dateStart %dateEnd
