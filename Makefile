@@ -2,7 +2,7 @@ OUT_DIR := $(shell pwd)/build
 
 clean:
 	rm -rf build/dist
-	rm build/nmad-app
+	rm -f build/nmad-app
 
 build-prod: clean
 	mkdir -p "${OUT_DIR}"
