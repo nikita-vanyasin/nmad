@@ -1,8 +1,9 @@
 # nmad Telegram bot
+(project is not active anymore)
 
 Add [bot](https://t.me/nmad_o_bot) to your chat to track nomad locations!
 
-[http://nmad.link/](http://nmad.link/)
+[http://nmad.link/](http://nmad.link/) (*Deactivated)
 
 Available commands:
 ```
